@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-EnotesApplication<enotes>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.enotes.EnotesApplication",
+      "projectName": "enotes",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

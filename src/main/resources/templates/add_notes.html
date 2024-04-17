@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang = "en" xmlns:th="http://www.thymeleaf.org" th:replace= "~{base::layout(~{::title},~{::section})}">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Add Note</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <section>
+        <form class="m-5 mb-3" th:action="@{/user/saveNote}" method="post">
+            <div class="mb-3">
+                <h1>[[${msg}]]</h1>
+                <label for="Title" class="form-label">Title</label>
+                <input name="title" required type="text" class="form-control" aria-describedby="title">
+        
+                <div id="title" class="form-text"></div>
+            </div>
+            <div class="mb-3">
+                <label for="Content" class="form-label">Content</label>
+                <textarea name="content" required style="height:200px" type="text" class="form-control form-text" id="Content"
+                    aria-describedby="Title"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        </section>
+    </body>
+</html>

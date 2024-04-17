@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::title},~{::section})}">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>All Notes</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Assuming you have a stylesheet file named styles.css in the static/css directory -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <section>
+    
+    <h1 class=" text-center card-header text-primary">YOUR Notes</h1>
+    <th:block th:if="${#lists.isEmpty(notes)}">
+      <p class="text-center">No notes available. Add a note!</p>
+    </th:block>
+    <th:block th:if="${not #lists.isEmpty(notes)}">
+    <div class="row m-5">
+      <p>[[${msg}]]</p>
+      <div th:each="n: ${notes}" class="col-12">
+        <div class="card p-5">
+          <img style="max-width:100px" src="img/background.pnc:\Users\ASUS\Downloads\background.jpg.jpgg" class="card-img-top" alt="">
+          <div class="card-body">
+            <h5 class="card-title" th:text="${n.title}"></h5>
+            <p class="card-text" th:text="${n.content}"></p>
+            <p class="card-text text-primary" th:text="${n.date}"></p>
+            <div class="text-center">
+              <!-- Replace 'deleteNote' with the actual delete endpoint -->
+              <a th:href="@{/user/deleteNote/{id}(id=${n.id})}" class="btn btn-primary">Delete</a>
+              <!-- Assuming you have an 'editNote' endpoint for updating -->
+              <a th:href="@{/user/editNotes/{id}(id=${n.id})}" class="btn btn-primary">Update</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+    <div class="col-md-4 offset-md-1 text-right p-1">
+      <p class="fw-bold">Total Notes : [[${totalElements}]]</p>
+    </div>
+  <div class="col-md-6 ">
+    <ul class="pagination">
+    <th:block th:if="${currentPage != 0}">
+      <li class="page-item">
+        <a class="page-link" th:href="@{'/user/viewNotes?pageNo='+${currentPage-1}}">Previous</a>
+      </li>
+      </th:block>
+      <th:block th:each="page: ${#numbers.sequence(1, totalPages)}">
+        <li class="page-item" th:classappend="${currentPage == page - 1 ? 'active' : ''}">
+          <a class="page-link" th:href="@{'/user/viewNotes?pageNo='+${page-1}}">[[${page}]]</a>
+        </li>
+      </th:block>
+      <th:block th:if="${currentPage + 1 != totalPages}">
+      <li  class="page-item">
+        <a class="page-link" th:href="@{'/user/viewNotes?pageNo='+${currentPage+1}}">Next</a>
+      </li>
+      </th:block>
+    </ul>
+
+  </div>
+    </div>
+    </th:block>
+  </section>
+</body>
+
+</html>
