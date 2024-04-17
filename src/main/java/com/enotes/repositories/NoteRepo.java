@@ -13,7 +13,7 @@ import com.enotes.entity.User;
 @Service
 public interface NoteRepo extends MongoRepository<Note, String> {
     @SuppressWarnings("null")
-    public Note findById(String id);
+    public Optional<Note> findById(String id);
 
     public Page<Note> findNoteByUser(User user, Pageable page);
 }

@@ -1,5 +1,7 @@
 package com.enotes.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +22,8 @@ public class NoteService {
         return noteRepo.findNoteByUser(user,page);
     }
 
-    public Note findById(String id) {
-        Note note = noteRepo.findById(id);
+    public Optional<Note> findById(String id) {
+        Optional<Note> note = noteRepo.findById(id);
         return note;
     }
 
