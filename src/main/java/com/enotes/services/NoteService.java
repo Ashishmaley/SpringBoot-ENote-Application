@@ -22,9 +22,9 @@ public class NoteService {
         return noteRepo.findNoteByUser(user,page);
     }
 
-    public Optional<Note> findById(String id) {
-        Optional<Note> note = noteRepo.findById(id);
-        return note;
+    public Note findById(String id) {
+        Optional<Note> optionalNote = noteRepo.findById(id);
+        return optionalNote.orElse(null); // Returns null if optionalNote is empty
     }
 
     public Note addNote(Note note) {
