@@ -11,13 +11,14 @@
     <body>
           <section>
             <section>
-              <form class="m-5 mb-3" th:action="@{/user/updateNote/{id}(id=${note.id})}" method="post">
+              <form class="m-5 mb-3" th:action="@{/user/updateNote/{id}(id=${note.id})}" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label for="Title" class="form-label">Title</label>
                   <input name="title" required type="text" class="form-control" id="Title" aria-describedby="title"
                     th:value="${note.title}">
                   <div id="title" class="form-text"></div>
                 </div>
+                  Image (Optional) : <input class="mb-3" type="file" name="image" accept="image/*" />
                 <div class="mb-3">
                   <label for="Content" class="form-label">Content</label>
                   <textarea name="content" required style="height:200px" type="text" class="form-control form-text" id="Content"

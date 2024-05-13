@@ -1,12 +1,20 @@
 package com.enotes.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Base64;
 
+import com.enotes.entity.Photo;
+import com.enotes.services.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +31,16 @@ import com.enotes.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class HomeController {
 
     @Autowired
     private NoteService noteService;
+
+    @Autowired
+    private PhotoService photoService;
 
     @Autowired
     private UserService userService;
@@ -86,6 +98,20 @@ public class HomeController {
         m.addAttribute("notes", notes.getContent());
         return "view_notes";
     }
+    @GetMapping("/user/photos/{id}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable String id) {
+        Photo photo = photoService.getPhoto(id);
+        if (photo == null || photo.getImage() == null || photo.getImage().getData() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Set the content type of the response
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG); // Adjust content type based on your image type
+
+        // Return the image data with appropriate headers
+        return new ResponseEntity<>(photo.getImage().getData(), headers, HttpStatus.OK);
+    }
 
     @GetMapping("/user/logout")
     public String logout() {
@@ -126,12 +152,15 @@ public class HomeController {
     }
 
     @PostMapping("/user/saveNote")
-    public String addNote(@ModelAttribute Note note, HttpSession session, Principal p, Model m) {
+    public String addNote(@ModelAttribute Note note,
+                          @RequestParam("image") MultipartFile image, HttpSession session, Principal p, Model m) throws IOException {
         note.setUser(getUser(p, m));
         if (note.getContent().length() > 1000) { // Adjust the maximum length here
             m.addAttribute("msg", "Content is too long! Please limit it to 4000 characters.");
             return "add_notes";
         }
+        String id = photoService.addPhoto( image);
+        note.setImageId(id);
         note.setDate(LocalDate.now());
         Note n = noteService.addNote(note);
         if (n != null) {
@@ -148,13 +177,16 @@ public class HomeController {
     }
 
     @PostMapping("/user/updateNote/{id}")
-    public String updateNote(@PathVariable("id") String id, @ModelAttribute Note note, HttpSession session, Principal p,
-            Model m) {
+    public String updateNote(@PathVariable("id") String id, @RequestParam("image") MultipartFile image, @ModelAttribute Note note, HttpSession session, Principal p,
+            Model m) throws IOException {
         note.setUser(getUser(p, m));
         if (note.getContent().length() > 1000) { // Adjust the maximum length here
             m.addAttribute("msg", "Content is too long! Please limit it to 4000 characters.");
             return "add_notes";
         }
+
+        String imageId = photoService.addPhoto( image);
+        note.setImageId(imageId);
         note.setDate(LocalDate.now());
         Note n = noteService.updateNote(note, id);
         if (n != null) {

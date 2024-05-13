@@ -20,7 +20,7 @@ public class SpringSecurity {
 
     @Bean
     public UserDetailsService gDetailsService() {
-        return new CustumUserDetailsService();
+        return new CustomUserDetailsService();
     }
 
     @Bean

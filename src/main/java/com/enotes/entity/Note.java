@@ -14,7 +14,7 @@ public class Note {
     private String title;
     private String content;
     private LocalDate date;
-    
+    private String imageId;
     @DBRef
     private User user;
 
@@ -26,10 +26,19 @@ public class Note {
         this.title = title;
         this.content = content;
         this.date = LocalDate.now();
+        this.imageId = null;
     }
 
     // Getters and setters
-    
+
+    public String getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
     public String getId() {
         return id;
     }

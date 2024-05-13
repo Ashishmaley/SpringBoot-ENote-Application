@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.enotes.entity.Note;
 import com.enotes.entity.User;
 import com.enotes.repositories.NoteRepo;
+
 @Component
 public class NoteService {
     @Autowired
@@ -45,5 +46,4 @@ public class NoteService {
         noteRepo.save(note);
         return note;
     }
-
 }
