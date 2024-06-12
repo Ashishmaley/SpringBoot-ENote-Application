@@ -81,37 +81,6 @@ public class HomeController {
         return "register";
     }
 
-    @GetMapping("/user/editNotes/{id}")
-    public String editNotes(@PathVariable("id") String id, Model m) {
-        Note note = noteService.findById(id);
-        m.addAttribute("note", note);
-        return "edit_notes";
-    }
-
-    @GetMapping("/user/viewNotes")
-    public String viewNotes(Model m, Principal p, @RequestParam(defaultValue = "0") Integer pageNo) {
-        User user = getUser(p, m);
-        Page<Note> notes = noteService.getNotesByUser(user, pageNo);
-        m.addAttribute("currentPage", pageNo);
-        m.addAttribute("totalElements", notes.getTotalElements());
-        m.addAttribute("totalPages", notes.getTotalPages());
-        m.addAttribute("notes", notes.getContent());
-        return "view_notes";
-    }
-    @GetMapping("/user/photos/{id}")
-    public ResponseEntity<byte[]> getPhoto(@PathVariable String id) {
-        Photo photo = photoService.getPhoto(id);
-        if (photo == null || photo.getImage() == null || photo.getImage().getData() == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Set the content type of the response
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG); // Adjust content type based on your image type
-
-        // Return the image data with appropriate headers
-        return new ResponseEntity<>(photo.getImage().getData(), headers, HttpStatus.OK);
-    }
 
     @GetMapping("/user/logout")
     public String logout() {
@@ -150,6 +119,41 @@ public class HomeController {
             m.addAttribute("msg", "account verification failed!");
         return "message";
     }
+
+
+
+    @GetMapping("/user/editNotes/{id}")
+    public String editNotes(@PathVariable("id") String id, Model m) {
+        Note note = noteService.findById(id);
+        m.addAttribute("note", note);
+        return "edit_notes";
+    }
+
+    @GetMapping("/user/viewNotes")
+    public String viewNotes(Model m, Principal p, @RequestParam(defaultValue = "0") Integer pageNo) {
+        User user = getUser(p, m);
+        Page<Note> notes = noteService.getNotesByUser(user, pageNo);
+        m.addAttribute("currentPage", pageNo);
+        m.addAttribute("totalElements", notes.getTotalElements());
+        m.addAttribute("totalPages", notes.getTotalPages());
+        m.addAttribute("notes", notes.getContent());
+        return "view_notes";
+    }
+    @GetMapping("/user/photos/{id}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable String id) {
+        Photo photo = photoService.getPhoto(id);
+        if (photo == null || photo.getImage() == null || photo.getImage().getData() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG); // Adjust content type based on your image type
+
+        // Return the image data with appropriate headers
+        return new ResponseEntity<>(photo.getImage().getData(), headers, HttpStatus.OK);
+    }
+
+
 
     @PostMapping("/user/saveNote")
     public String addNote(@ModelAttribute Note note,

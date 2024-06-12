@@ -11,20 +11,20 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 
-<body>
+<body style="min-width: 18rem;">
   <section>
-    
+
     <h1 class=" text-center card-header text-primary">YOUR Notes</h1>
     <th:block th:if="${#lists.isEmpty(notes)}">
       <p class="text-center">No notes available. Add a note!</p>
     </th:block>
     <th:block th:if="${not #lists.isEmpty(notes)}">
-    <div class="row m-5">
+    <div class="row m-2">
       <p>[[${msg}]]</p>
       <div th:each="n: ${notes}" class="col-12">
-        <div class="card p-5">
-          <img style="max-width:100px" src="img/background.pnc:\Users\ASUS\Downloads\background.jpg.jpgg" class="card-img-top" alt="">
-          <div class="card-body">
+        <div class="card p-2" style="min-width: 15rem;">
+          <img style="max-width:70px" src="img/background.pnc:\Users\ASUS\Downloads\background.jpg.jpgg" class="card-img-top" alt="">
+          <div class="card-body" >
             <h5 class="card-title" th:text="${n.title}"></h5>
             <img style="max-width:600px" th:if="${n.getImageId()!=null}" th:src="@{'/user/photos/' + ${n.imageId}}" class="card-img-top mb-3" alt="">
             <p class="card-text" th:text="${n.content}"></p>
