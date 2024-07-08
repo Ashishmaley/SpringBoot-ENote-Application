@@ -2,12 +2,12 @@ package com.enotes.controller;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Base64;
-
 import com.enotes.entity.Photo;
+import com.enotes.services.JwtService;
 import com.enotes.services.PhotoService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -15,13 +15,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.*;
 import com.enotes.entity.Note;
 import com.enotes.entity.User;
 import com.enotes.repositories.UserRepo;
@@ -30,7 +31,6 @@ import com.enotes.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -40,10 +40,17 @@ public class HomeController {
     private NoteService noteService;
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
     private PhotoService photoService;
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private UserRepo userRepo;
 
@@ -57,12 +64,40 @@ public class HomeController {
                 return user;
             }
         }
-        // Handle the case where the user or principal is null
         return null;
+    }
+    @PostMapping("/signIn")
+    public String login(@RequestParam("username") String username, @RequestParam("password") String password, HttpServletResponse response) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+            if (authentication.isAuthenticated()) {
+                String token = jwtService.generateToken(username);
+                Cookie cookie = new Cookie("Bearer", token);
+                cookie.setHttpOnly(true);
+                cookie.setMaxAge(60 * 60 * 36);
+                response.addCookie(cookie);
+                return "redirect:/user/viewNotes";
+            } else {
+                return "redirect:/error";
+            }
+        } catch (Exception e) {
+            return "redirect:/error";
+        }
+    }
+    @GetMapping("user/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = new Cookie("Bearer", null); // Null value to delete the cookie
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        request.getSession().invalidate();
+        return "redirect:/";
     }
 
     @GetMapping("/")
-    public String Home() {
+    public String Home(HttpServletRequest request) {
         return "index";
     }
 
@@ -81,11 +116,6 @@ public class HomeController {
         return "register";
     }
 
-
-    @GetMapping("/user/logout")
-    public String logout() {
-        return "logout";
-    }
 
     @PostMapping("/saveUser")
     public String saveUser(@RequestParam("email") String email,
@@ -207,5 +237,14 @@ public class HomeController {
         noteService.deleteNote(id);
         return "redirect:/user/viewNotes";
     }
+
+//    @PostMapping("/validateToken")
+//    public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String token) {
+//        if (jwtService.validateToken(token)) {
+//            return ResponseEntity.ok().build();
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//    }
 
 }

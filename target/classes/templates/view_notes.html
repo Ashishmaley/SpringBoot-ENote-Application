@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 
-<body style="min-width: 18rem;">
+<body>
   <section>
 
     <h1 class=" text-center card-header text-primary">YOUR Notes</h1>
@@ -38,11 +38,11 @@
       </div>
     </div>
     <div class="row">
-    <div class="col-md-4 offset-md-1 text-right p-1">
-      <p class="fw-bold">Total Notes : [[${totalElements}]]</p>
+    <div class="col-md-4 text-right">
+      <p class="fw-bold margin: 0rem">Total Notes : [[${totalElements}]]</p>
     </div>
   <div class="col-md-6 ">
-    <ul class="pagination">
+    <ul class="pagination ">
     <th:block th:if="${currentPage != 0}">
       <li class="page-item">
         <a class="page-link" th:href="@{'/user/viewNotes?pageNo='+${currentPage-1}}">Previous</a>
